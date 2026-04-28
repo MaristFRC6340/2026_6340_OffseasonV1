@@ -14,7 +14,9 @@ import swervelib.SwerveInputStream;
 import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -31,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
   
   // Driver Controller init
   final CommandXboxController driverXbox = new CommandXboxController(0);
@@ -53,7 +56,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                     () -> driverXbox.getLeftY() * 1,
                     () -> driverXbox.getLeftX() * 1)
-                    .withControllerRotationAxis(() -> driverXbox.getRightX() * 1)
+                    .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                     .deadband(OperatorConstants.DEADBAND)
                     .scaleTranslation(0.8) // change later
                     .scaleRotation(0.8)
@@ -119,10 +122,18 @@ public class RobotContainer {
     //autoChooser = AutoBuilder.buildAutoChooser();
     //SmartDashboard.putData("Auto Chooser", autoChooser);
 
+    autoChooser = AutoBuilder.buildAutoChooser();
+    // boolean isCompetition = true;
 
+    // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
+    // (stream) -> isCompetition
+    // ? stream
+
+    // )
 
     // Configure the trigger bindings
     configureBindings();
+    SmartDashboard.putData("pik auto plz", autoChooser);
   }
 
   /**
@@ -145,7 +156,7 @@ public class RobotContainer {
     driverXbox.leftTrigger().whileTrue(drivebase.driveFieldOriented(driveAngularSlow)); 
 
     // Zero the Gyro (Reset Field Centric)
-    driverXbox.leftStick().onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    driverXbox.a().onTrue((Commands.runOnce(()->drivebase.zeroGyro())));
 
     // Default Driving Command
     drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveAngularVelocity)); // Fast Mode
@@ -161,6 +172,14 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //return Autos.exampleAuto(m_exampleSubsystem);
-    return null;
+    Command autoCommand = autoChooser.getSelected();
+    PathPlannerAuto auto = (PathPlannerAuto) autoCommand;
+
+    Pose2d startingPose = auto.getStartingPose();
+    
+
+    return autoChooser.getSelected();
+  
+
   }
 }

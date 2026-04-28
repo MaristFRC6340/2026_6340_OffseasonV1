@@ -7,6 +7,7 @@ package frc.robot.subsystems.swervedrive;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.utility.WheelForceCalculator.Feedforwards;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -16,6 +17,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+//import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -73,6 +75,8 @@ public class SwerveSubsystem extends SubsystemBase
    * Enable vision odometry updates while driving.
    */
   private final boolean     visionDriveTest = true;
+  
+  
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -122,12 +126,42 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.getGyro().setOffset(new Rotation3d(0, 0, Math.PI));
 
     // POSE ESTIMATOR FOR BETTER AIMING - UNTESTED
-    // poseEstimator = new SwerveDrivePoseEstimator(
+  //   poseEstimator = new SwerveDrivePoseEstimator(
     //   getKinematics(),
     //   getHeading(),
     //   swerveDrive.getModulePositions(),
     //   startingPose);
     // limTable = NetworkTableInstance.getDefault().getTable("limelight");
+    RobotConfig config;
+    try{
+      config = RobotConfig.fromGUISettings();
+      AutoBuilder.configure(
+      this::getPose, 
+      this::resetOdometry,
+      this::getRobotVelocity,
+      (speeds, Feedforwards) -> swerveDrive.setChassisSpeeds(speeds),
+      new PPHolonomicDriveController(
+        
+      new PIDConstants(1, 0, 0), //translation pid
+      new PIDConstants(1, 0, 0) // rotation pid
+      ),
+      config,
+      ()-> {
+        var alliance = DriverStation.getAlliance();
+        if(alliance.isPresent()) {
+          return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+      },
+      this
+      ); 
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+         
+
+
+
   }
 
   /**
@@ -204,6 +238,7 @@ public class SwerveSubsystem extends SubsystemBase
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
                                      );
+                                 
   }
 
   
@@ -401,6 +436,8 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.resetOdometry(initialHolonomicPose);
   }
 
+  public void setStartPose(Pose2d startPose){
+  }
   /**
    * Gets the current pose (position and rotation) of the robot, as reported by odometry.
    *
