@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   
+  private  Pose2d startPose;
   // Driver Controller init
   final CommandXboxController driverXbox = new CommandXboxController(0);
 
@@ -65,7 +66,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularSlow = SwerveInputStream.of(drivebase.getSwerveDrive(),
                     () -> driverXbox.getLeftY() * .6, // Set these values for slower: 1/2 Speed
                     () -> driverXbox.getLeftX() * .6) // Set these values for slower: 1/2 Speed
-                    .withControllerRotationAxis(() -> driverXbox.getRightX() * 1)
+                    .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                     .deadband(OperatorConstants.DEADBAND)
                     .scaleTranslation(0.3)
                     .scaleRotation(0.25)
@@ -123,17 +124,17 @@ public class RobotContainer {
     //SmartDashboard.putData("Auto Chooser", autoChooser);
 
     autoChooser = AutoBuilder.buildAutoChooser();
-    // boolean isCompetition = true;
+   // boolean isCompetition = true;
 
     // autoChooser = AutoBuilder.buildAutoChooserWithOptionsModifier(
     // (stream) -> isCompetition
-    // ? stream
+    // ? stream.filterz
 
     // )
 
     // Configure the trigger bindings
     configureBindings();
-    SmartDashboard.putData("pik auto plz", autoChooser);
+    SmartDashboard.putData("Auto Chooser", autoChooser);
   }
 
   /**
@@ -175,8 +176,8 @@ public class RobotContainer {
     Command autoCommand = autoChooser.getSelected();
     PathPlannerAuto auto = (PathPlannerAuto) autoCommand;
 
-    Pose2d startingPose = auto.getStartingPose();
-    
+    Pose2d startPose = auto.getStartingPose();
+    drivebase.setStartPose(startPose);
 
     return autoChooser.getSelected();
   

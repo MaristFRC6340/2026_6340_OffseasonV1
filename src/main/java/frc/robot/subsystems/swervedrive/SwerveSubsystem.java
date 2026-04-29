@@ -437,7 +437,12 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public void setStartPose(Pose2d startPose){
+    swerveDrive.resetOdometry(new Pose2d(startPose.getX(), startPose.getY(), startPose.getRotation()));
   }
+
+  // public static void setStartPose(double x, double y, Rotation2d rotation) {
+  //   swerveDrive.resetOdometry(new Pose2d(x,y, rotation));
+  // }
   /**
    * Gets the current pose (position and rotation) of the robot, as reported by odometry.
    *
@@ -657,5 +662,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command zeroGyroCommand() {
     return Commands.runOnce(() -> zeroGyro());
   }
+
+
 
 }
