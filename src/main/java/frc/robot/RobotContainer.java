@@ -55,8 +55,8 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                    () -> driverXbox.getLeftY() * 1,
-                    () -> driverXbox.getLeftX() * 1)
+                    () -> driverXbox.getLeftY() * -1,
+                    () -> driverXbox.getLeftX() * -1) 
                     .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                     .deadband(OperatorConstants.DEADBAND)
                     .scaleTranslation(0.8) // change later
@@ -64,8 +64,8 @@ public class RobotContainer {
                     .allianceRelativeControl(true); // in Alpha_2025, they make this false & flipDirection based on alliance instead 
 
   SwerveInputStream driveAngularSlow = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                    () -> driverXbox.getLeftY() * .6, // Set these values for slower: 1/2 Speed
-                    () -> driverXbox.getLeftX() * .6) // Set these values for slower: 1/2 Speed
+                    () -> driverXbox.getLeftY() * -.6, // Set these values for slower: 1/2 Speed
+                    () -> driverXbox.getLeftX() * -.6) // Set these values for slower: 1/2 Speed
                     .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                     .deadband(OperatorConstants.DEADBAND)
                     .scaleTranslation(0.3)
@@ -161,6 +161,7 @@ public class RobotContainer {
 
     // Default Driving Command
     drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveAngularVelocity)); // Fast Mode
+    //drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveRobotOriented)); //robot centric
 
 
   }
