@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -34,7 +35,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
-  
+  private LauncherSubsystem launcherSubsystem;
+
   private  Pose2d startPose;
   // Driver Controller init
   final CommandXboxController driverXbox = new CommandXboxController(0);
@@ -119,6 +121,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    launcherSubsystem = new LauncherSubsystem();
     // add auto options to SmartDashboard
     //autoChooser = AutoBuilder.buildAutoChooser();
     //SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -163,6 +166,17 @@ public class RobotContainer {
     drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveAngularVelocity)); // Fast Mode
     //drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveRobotOriented)); //robot centric
 
+    // #--------------------------Operator Commands------------------------#
+    operatorXbox.rightBumper().whileTrue(launcherSubsystem.startFeederCommand())
+    .whileFalse(launcherSubsystem.stopFeederCommand()
+    );
+
+        operatorXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerBothCommand())
+    .whileFalse(launcherSubsystem.stopIndexerBothCommand()
+    );
+
+   // operatorXbox.leftBumper().whileTrue(launcherSubsystem.setShooterVelocityCommand(1))
+    
 
   }
 

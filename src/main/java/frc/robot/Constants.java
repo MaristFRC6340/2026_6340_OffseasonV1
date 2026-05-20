@@ -45,6 +45,34 @@ public final class Constants {
     public static double kDrivebaseRadius = .409;
   }
 
+  public static class LauncherConstants{
+
+    private static final Slot0Configs slot0Configs = new Slot0Configs()
+    .withKA(0)
+    .withKG(.3)
+    .withKS(.0)
+    .withKV(0)
+    .withKP(15)
+    .withKI(0)
+    .withKD(0);
+
+
+    public static final int indexerID = 30;
+    public static final int rearIndexerID = 31;
+    public static final int leftShooterID = 32;
+    public static final int rightShooterID = 33;
+    public static final int activeFloorID = 34;
+    public static final int launcherCurrentLimit = 60;
+
+    public static final TalonFXConfiguration launcherConfig = new TalonFXConfiguration()
+    .withSlot0(slot0Configs);
+  }
+
+  public static class IntakeConstants{
+    public static final int intakeID = 40;
+    public static final int activeFloorID = 41;
+  }
+
   // Constants for Swerve Drive
   public static final double MAX_SPEED = Units.feetToMeters(14.5);
 
