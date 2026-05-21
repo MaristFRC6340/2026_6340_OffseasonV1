@@ -35,6 +35,8 @@ public class LauncherSubsystem extends SubsystemBase {
     SparkMax feederMotor;
     SparkFlex rearIndexer;
     SparkFlex activeFloor;
+    private double reverse = -1;
+    private double forward =1;
 
     private final VelocityVoltage shooter_request = new VelocityVoltage(0).withSlot(0);
 
@@ -117,9 +119,19 @@ public class LauncherSubsystem extends SubsystemBase {
     rearIndexer.set(power);
   }
 
+  public void setActiveFloorPower(double power){
+    activeFloor.set(forward*power);
+  }
+
   public void setIndexerBothSpeed(double power) {
     rearIndexer.set(-power);
     feederMotor.set(power);
+  }
+
+    public void setIndexerAndFloorSpeed(double power) {
+    rearIndexer.set(reverse*power);
+    feederMotor.set(power);
+    activeFloor.set(forward*power);
   }
 
   @Override
@@ -135,6 +147,14 @@ public class LauncherSubsystem extends SubsystemBase {
 
   public Command stopShooterCommand(){
     return this.run(()-> setShooterVelocity(0));
+  }
+
+  public Command startFloorCommand(){
+    return Commands.run(()-> setActiveFloorPower(1));
+  }
+
+    public Command stopFloorCommand(){
+    return Commands.run(()-> setActiveFloorPower(1));
   }
 
   public Command feederSpeedCommand(double speed) {
@@ -153,14 +173,16 @@ public class LauncherSubsystem extends SubsystemBase {
     return Commands.run(() -> setRearIndexerSpeed(0));
   }
 
+    public Command stopActiveFloorCommand(){
+      return Commands.run(()-> setActiveFloorPower(0));
+    }
+
     public Command startIndexerBothCommand(){
      return Commands.run(() -> setIndexerBothSpeed(.75));
   }
 
       public Command stopIndexerBothCommand()  {
     return Commands.run(() -> setIndexerBothSpeed(0));
-
-
   }
 
   public Command startFeederCommand(){
@@ -168,6 +190,18 @@ public class LauncherSubsystem extends SubsystemBase {
   }
   
     public Command reverseFeederCommand(){
+    return Commands.run(()-> setFeederSpeed(-0.8));
+  }
+
+  public Command stopIndexerAndFloorCommand()  {
+    return Commands.run(() -> setIndexerAndFloorSpeed(0));
+  }
+
+    public Command startIndexerAndFloorCommand()  {
+    return Commands.run(() -> setIndexerAndFloorSpeed(0.8));
+  }
+  
+    public Command reverseIndexerAndFloorCommand(){
     return Commands.run(()-> setFeederSpeed(-0.8));
   }
 }

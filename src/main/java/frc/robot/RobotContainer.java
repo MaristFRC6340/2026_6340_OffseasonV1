@@ -171,8 +171,16 @@ public class RobotContainer {
     .whileFalse(launcherSubsystem.stopFeederCommand()
     );
 
-        operatorXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerBothCommand())
-    .whileFalse(launcherSubsystem.stopIndexerBothCommand()
+    operatorXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerBothCommand())
+    .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand ()
+    );
+
+    driverXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerAndFloorCommand())
+    .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
+    );
+
+    driverXbox.rightBumper().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
+    .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
    // operatorXbox.leftBumper().whileTrue(launcherSubsystem.setShooterVelocityCommand(1))
