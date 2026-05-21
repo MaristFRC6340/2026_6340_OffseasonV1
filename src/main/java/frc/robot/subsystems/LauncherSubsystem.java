@@ -120,7 +120,7 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public void setActiveFloorPower(double power){
-    activeFloor.set(forward*power);
+    activeFloor.set(reverse*power);
   }
 
   public void setIndexerBothSpeed(double power) {
@@ -128,10 +128,11 @@ public class LauncherSubsystem extends SubsystemBase {
     feederMotor.set(power);
   }
 
+
     public void setIndexerAndFloorSpeed(double power) {
     rearIndexer.set(reverse*power);
     feederMotor.set(power);
-    activeFloor.set(forward*power);
+    activeFloor.set(reverse*power);
   }
 
   @Override
