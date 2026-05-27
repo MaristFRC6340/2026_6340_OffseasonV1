@@ -57,6 +57,9 @@ public final class Constants {
     .withKD(0);
 
 
+    public static final double nearShooterVelocity = 70;
+    public static final double farShooterVelocity = 95;
+
     public static final int indexerID = 30;
     public static final int rearIndexerID = 31;
     public static final int leftShooterID = 32;

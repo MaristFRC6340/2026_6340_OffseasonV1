@@ -51,7 +51,7 @@ public class RobotContainer {
   private final SwerveSubsystem drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve"));
 
-  private double rotationSpeed = 0.8;
+  private double rotationSpeed = 0.85;
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -167,23 +167,19 @@ public class RobotContainer {
     //drivebase.setDefaultCommand(drivebase.driveFieldOriented(driveRobotOriented)); //robot centric
 
     // #--------------------------Operator Commands------------------------#
-    operatorXbox.rightBumper().whileTrue(launcherSubsystem.startFeederCommand())
-    .whileFalse(launcherSubsystem.stopFeederCommand()
-    );
 
-    operatorXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerBothCommand())
-    .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand ()
-    );
-
-    driverXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerAndFloorCommand())
+    operatorXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerAndFloorCommand())
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
-    driverXbox.rightBumper().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
+    operatorXbox.rightBumper().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
-   // operatorXbox.leftBumper().whileTrue(launcherSubsystem.setShooterVelocityCommand(1))
+    //driverXbox.rightBumper().onTrue(launcherSubsystem.setShooterSpeedCmd(rotationSpeed));
+    driverXbox.rightBumper().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.nearShooterVelocity));//70 is nearish
+    driverXbox.y().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.farShooterVelocity));
+    driverXbox.leftBumper().onTrue(launcherSubsystem.stopShooterCommand());
     
 
   }

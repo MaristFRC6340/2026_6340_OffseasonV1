@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.revrobotics.PersistMode;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import swervelib.simulation.ironmaple.utils.LegacyFieldMirroringUtils2024;
 
 public class LauncherSubsystem extends SubsystemBase {
 
@@ -45,28 +47,45 @@ public class LauncherSubsystem extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public LauncherSubsystem() {
     leftShooter = new TalonFX(Constants.LauncherConstants.leftShooterID);
+    leftShooter.setNeutralMode(NeutralModeValue.Coast);
 
     rightShooter = new TalonFX(Constants.LauncherConstants.rightShooterID);
     rightShooter.setNeutralMode(NeutralModeValue.Coast);
 
-    MotorOutputConfigs shooterConfigs = new MotorOutputConfigs();
-    shooterConfigs.Inverted=InvertedValue.Clockwise_Positive;
-    rightShooter.getConfigurator().apply(shooterConfigs);
+    // Upping Amp Limit for Shooter Motors
+
+    MotorOutputConfigs rightShooterConfigs = new MotorOutputConfigs();
+    rightShooterConfigs.Inverted=InvertedValue.CounterClockwise_Positive;
+    rightShooter.getConfigurator().apply(rightShooterConfigs);
+
+    MotorOutputConfigs leftShooterConfigs = new MotorOutputConfigs();
+    leftShooterConfigs.Inverted=InvertedValue.Clockwise_Positive;
+    leftShooter.getConfigurator().apply(leftShooterConfigs);
 
 
     feederMotor = new SparkMax(Constants.LauncherConstants.indexerID, MotorType.kBrushless);
     rearIndexer = new SparkFlex(Constants.LauncherConstants.rearIndexerID, MotorType.kBrushless);
     activeFloor = new SparkFlex(Constants.LauncherConstants.activeFloorID, MotorType.kBrushless);// change from null to something else later
 
-    SparkMaxConfig launcherConfig = new SparkMaxConfig();
-    launcherConfig.smartCurrentLimit(Constants.LauncherConstants.launcherCurrentLimit);
+    var slot0ConfigsFlywheel = new Slot0Configs();
+        slot0ConfigsFlywheel.kS = 0.1;
+        slot0ConfigsFlywheel.kV = 0.12;
+        slot0ConfigsFlywheel.kP = 0.11;
+        slot0ConfigsFlywheel.kI = 0;
+        slot0ConfigsFlywheel.kD = 0;
+      rightShooter.getConfigurator().apply(slot0ConfigsFlywheel);
+      leftShooter.getConfigurator().apply(slot0ConfigsFlywheel);
 
-            launcherConfig.closedLoop
-        .p(0.00015)
-        .i(0)
-        .d(0)
-        .outputRange(0, 0.95)
-        .feedForward.kV( 12.0 / 6271 ); // 12 Volts divided by Maximum RPM of KrakenX60 (12.0 / 6271)
+
+    // SparkMaxConfig launcherConfig = new SparkMaxConfig();
+    // launcherConfig.smartCurrentLimit(Constants.LauncherConstants.launcherCurrentLimit);
+
+        // launcherConfig.closedLoop
+        // .p(0.00015)
+        // .i(0)
+        // .d(0)
+        // .outputRange(0, 0.95)
+        // .feedForward.kV( 12.0 / 6271 ); // 12 Volts divided by Maximum RPM of KrakenX60 (12.0 / 6271)
     
         //Configfor for feeder and active floor
         SparkMaxConfig feederConfig = new SparkMaxConfig();
@@ -75,15 +94,12 @@ public class LauncherSubsystem extends SubsystemBase {
         feederMotor.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         activeFloor.configure(feederConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // rightShooter.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        //rightShooter.setDirection(InvertedValue.Clockwise_Positive);
 
         //launcherConfig.disableFollowerMode();
 
       // Invert Left
-      launcherConfig.inverted(true);
       //launcherConfig.follow(launcherRight); // Trying to have left follow the right
-      leftShooter.getConfigurator().apply(Constants.LauncherConstants.launcherConfig);
+      //leftShooter.getConfigurator().apply(Constants.LauncherConstants.launcherConfig);
 
       // Encoders for Launching Motors
        //m_leftLaunchEncoder = leftShooter.getEncoder();
@@ -97,20 +113,30 @@ public class LauncherSubsystem extends SubsystemBase {
       SmartDashboard.putNumber("Right Launcher RPM:", 0);
       SmartDashboard.putNumber("Left Launch Amps", 0);
       SmartDashboard.putNumber("Right Launch Amps", 0);
-      SmartDashboard.putNumber("Shoot Velocity Set", 0);
-      
+      double rightShooterVelocity = rightShooter.getVelocity().getValueAsDouble()*60;
+      double leftShooterVelocity = leftShooter.getVelocity().getValueAsDouble()*60;
+
+      SmartDashboard.putNumber("Shoot Velocity Right", rightShooterVelocity);
+      SmartDashboard.putNumber("Shoot Velocity Left", leftShooterVelocity);
       // binding camera
 
   }
 
-  public void setShooterRPM(double rpm) {
-    leftShooter.set(rpm);
-    rightShooter.set(rpm);
+
+
+  public void setRightShooterVelocity(double velocity){
+    rightShooter.setControl(shooter_request.withVelocity(velocity).withFeedForward(0.5));
+  }
+
+    public void setLeftShooterVelocity(double velocity){
+    leftShooter.setControl(shooter_request.withVelocity(velocity).withFeedForward(0.5));
   }
 
   public void setShooterVelocity(double velocity){
     rightShooter.setControl(shooter_request.withVelocity(velocity).withFeedForward(0.5));
+    leftShooter.setControl(shooter_request.withVelocity(velocity).withFeedForward(0.5));
   }
+
   public void setFeederSpeed(double power) {
     feederMotor.set(power);
   }
@@ -135,19 +161,30 @@ public class LauncherSubsystem extends SubsystemBase {
     activeFloor.set(reverse*power);
   }
 
+  //shooter below
+    public void setShooterSpeed(double power){
+      rightShooter.set(power);
+      leftShooter.set(power);
+  }
+
+
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    double shooterVelocity = rightShooter.getVelocity().getValueAsDouble()*60;
-    SmartDashboard.putNumber("Shooter Velocity", shooterVelocity);
+    double rightShooterVelocityReal = rightShooter.getVelocity().getValueAsDouble()*60;
+    SmartDashboard.putNumber("Shooter Velocity Right Real", rightShooterVelocityReal);
+
+    double leftShooterVelocityReal = leftShooter.getVelocity().getValueAsDouble()*60;
+    SmartDashboard.putNumber("Shooter Velocity Left Real", leftShooterVelocityReal);
   }
 
   public Command setShooterVelocityCommand(double speed){
-    return Commands.run(()-> setShooterVelocity(speed));
+    return this.run(()-> setShooterVelocity(speed));
   }
 
   public Command stopShooterCommand(){
-    return this.run(()-> setShooterVelocity(0));
+    return this.run(()-> setShooterSpeed(0));
   }
 
   public Command startFloorCommand(){
@@ -205,4 +242,17 @@ public class LauncherSubsystem extends SubsystemBase {
     public Command reverseIndexerAndFloorCommand(){
     return Commands.run(()-> setFeederSpeed(-0.8));
   }
+    // shooter below
+    public Command setShooterSpeedCmd(double speed) {
+    return this.startEnd(() -> {
+              setShooterSpeed(speed);
+       }, () -> {
+           setShooterSpeed(0);
+       });
+    }
+
+    public Command startShooter(){
+      return Commands.run(()->setShooterSpeedCmd(0.8));
+    }
+  
 }
