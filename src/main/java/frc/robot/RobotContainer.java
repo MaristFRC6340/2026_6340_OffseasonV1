@@ -8,13 +8,16 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LauncherSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -35,7 +38,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
 
-  private LauncherSubsystem launcherSubsystem;
+  private LauncherSubsystem launcherSubsystem = new LauncherSubsystem();
+  private IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
   private  Pose2d startPose;
   // Driver Controller init
@@ -121,10 +125,25 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    launcherSubsystem = new LauncherSubsystem();
+    //Named Commands
+    NamedCommands.registerCommand("Start Launcher Near", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.NEAR_SHOOTER_VELOCITY));
+    NamedCommands.registerCommand("Start Launcher Mid", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.MID_SHOOTER_VELOCITY));
+    NamedCommands.registerCommand("Start Launcher Far", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.FAR_SHOOTER_VELOCITY));
+    NamedCommands.registerCommand("Stop Launcher",launcherSubsystem.stopShooterCommand());
+
+    NamedCommands.registerCommand("Start Intake", intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
+    NamedCommands.registerCommand("Stop Intake", intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.STOP_INTAKE));
+
+    NamedCommands.registerCommand("Start Indexer", launcherSubsystem.startIndexerAndFloorCommand());
+    NamedCommands.registerCommand("Stop Indexer", launcherSubsystem.stopIndexerAndFloorCommand());
+
+
+    //launcherSubsystem = new LauncherSubsystem();
     // add auto options to SmartDashboard
     //autoChooser = AutoBuilder.buildAutoChooser();
     //SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    //intakeSubsystem = new IntakeSubsystem();
 
     autoChooser = AutoBuilder.buildAutoChooser();
    // boolean isCompetition = true;
@@ -138,6 +157,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    
   }
 
   /**
@@ -172,15 +193,41 @@ public class RobotContainer {
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
+    //operatorXbox.leftBumper().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
+
     operatorXbox.rightBumper().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
     //driverXbox.rightBumper().onTrue(launcherSubsystem.setShooterSpeedCmd(rotationSpeed));
-    driverXbox.rightBumper().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.nearShooterVelocity));//70 is nearish
-    driverXbox.y().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.farShooterVelocity));
-    driverXbox.leftBumper().onTrue(launcherSubsystem.stopShooterCommand());
+    //driverXbox.rightBumper().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.NEAR_SHOOTER_VELOCITY));//70 is nearish
     
+    //driverXbox.y().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.MID_SHOOTER_VELOCITY));
+    
+    //driverXbox.x().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.FAR_SHOOTER_VELOCITY));
+    
+    //driverXbox.leftBumper().onTrue(launcherSubsystem.stopShooterCommand());
+    
+    operatorXbox.rightTrigger().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
+    
+    operatorXbox.leftTrigger().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.REVERSE_ROLLER_SPEED));
+
+    operatorXbox.y().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.FAR_SHOOTER_VELOCITY));
+
+    operatorXbox.b().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.MID_SHOOTER_VELOCITY));
+
+    operatorXbox.a().onTrue(launcherSubsystem.stopShooterCommand());
+
+    operatorXbox.x().onTrue(launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.NEAR_SHOOTER_VELOCITY));
+    //practice controls
+    driverXbox.povUp().whileTrue(launcherSubsystem.startIndexerAndFloorCommand())
+    .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
+    );
+    driverXbox.povDown().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
+    .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand());
+    driverXbox.povRight().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
+    driverXbox.povLeft().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.REVERSE_ROLLER_SPEED));
+
 
   }
 

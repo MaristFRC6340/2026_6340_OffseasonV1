@@ -57,8 +57,10 @@ public final class Constants {
     .withKD(0);
 
 
-    public static final double nearShooterVelocity = 70;
-    public static final double farShooterVelocity = 95;
+    public static final double NEAR_SHOOTER_VELOCITY = 60;
+    public static final double MID_SHOOTER_VELOCITY = 75;
+    public static final double FAR_SHOOTER_VELOCITY = 95;
+    public static final double STOP_LAUNCHER = 0;
 
     public static final int indexerID = 30;
     public static final int rearIndexerID = 31;
@@ -74,6 +76,21 @@ public final class Constants {
   public static class IntakeConstants{
     public static final int intakeID = 40;
     public static final int activeFloorID = 41;
+    public static final double ROLLER_SPEED = 0.33;
+    public static final double REVERSE_ROLLER_SPEED = -0.33;
+    public static final double STOP_INTAKE = 0;
+  
+
+    private static final Slot0Configs kSlot0Configs = new Slot0Configs()
+    .withKA(0)
+    .withKG(.3)
+    .withKS(.0)
+    .withKV(0)
+    .withKP(0)
+    .withKI(0)
+    .withKD(0);
+
+    public static TalonFXConfiguration intakeConfig = new TalonFXConfiguration().withSlot0(kSlot0Configs);
   }
 
   // Constants for Swerve Drive

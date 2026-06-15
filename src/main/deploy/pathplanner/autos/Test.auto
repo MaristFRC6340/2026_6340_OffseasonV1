@@ -5,22 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "deadline",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 10.0
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Example Path"
-                }
-              }
-            ]
+            "pathName": "Back Up Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Start Launcher Near"
           }
         }
       ]

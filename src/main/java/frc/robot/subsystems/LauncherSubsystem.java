@@ -133,6 +133,7 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
   public void setShooterVelocity(double velocity){
+    //System.out.println("Shooting");
     rightShooter.setControl(shooter_request.withVelocity(velocity).withFeedForward(0.5));
     leftShooter.setControl(shooter_request.withVelocity(velocity).withFeedForward(0.5));
   }
@@ -159,6 +160,7 @@ public class LauncherSubsystem extends SubsystemBase {
     rearIndexer.set(reverse*power);
     feederMotor.set(power);
     activeFloor.set(reverse*power);
+    
   }
 
   //shooter below
@@ -236,7 +238,7 @@ public class LauncherSubsystem extends SubsystemBase {
   }
 
     public Command startIndexerAndFloorCommand()  {
-    return Commands.run(() -> setIndexerAndFloorSpeed(0.8));
+    return Commands.run(() -> setIndexerAndFloorSpeed(1));
   }
   
     public Command reverseIndexerAndFloorCommand(){
