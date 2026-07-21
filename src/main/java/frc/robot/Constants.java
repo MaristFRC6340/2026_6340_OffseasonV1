@@ -60,6 +60,7 @@ public final class Constants {
     public static final double NEAR_SHOOTER_VELOCITY = 60;
     public static final double MID_SHOOTER_VELOCITY = 75;
     public static final double FAR_SHOOTER_VELOCITY = 95;
+    public static final double FIRST_MID_SHOT = 65;
     public static final double STOP_LAUNCHER = 0;
 
     public static final int indexerID = 30;

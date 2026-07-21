@@ -193,8 +193,13 @@ public class LauncherSubsystem extends SubsystemBase {
     return Commands.run(()-> setActiveFloorPower(1));
   }
 
+  public Command startStopFloorCommand() {
+    return Commands.startEnd(() -> setActiveFloorPower(-0.75), 
+    () -> setActiveFloorPower(0));
+  }
+
     public Command stopFloorCommand(){
-    return Commands.run(()-> setActiveFloorPower(1));
+    return Commands.run(()-> setActiveFloorPower(0));
   }
 
   public Command feederSpeedCommand(double speed) {

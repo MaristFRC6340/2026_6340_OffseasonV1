@@ -391,6 +391,8 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.driveFieldOriented(velocity);
   }
 
+
+
   /**
    * Drive the robot given a chassis field oriented velocity.
    *
@@ -402,6 +404,23 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.driveFieldOriented(velocity.get());
     });
   }
+
+
+//new function
+  //   public void lockDriveFieldOriented(double zRotation, Supplier<ChassisSpeeds> velocity)
+  // {
+  //     double forwardSpeed = velocity.get().vxMetersPerSecond;
+  //     double lateralSpeed = velocity.get().vyMetersPerSecond;
+  //     double angularSpeed = velocity.get().omegaRadiansPerSecond;
+  //     ChassisSpeeds lockVelocity = new ChassisSpeeds(forwardSpeed, lateralSpeed, angularSpeed);
+  // }
+
+  //       public Command lockDriveFieldOrientedCmd(Supplier<ChassisSpeeds> velocity){
+  //   return run(() -> {
+  //     swerveDrive.driveFieldOriented(lockDriveFieldOriented(0, velocity));
+  //   });
+  // }
+
 
   /**
    * Drive according to the chassis robot oriented velocity.

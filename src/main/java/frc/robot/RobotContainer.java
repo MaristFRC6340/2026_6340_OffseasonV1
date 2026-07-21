@@ -75,7 +75,7 @@ public class RobotContainer {
                     .withControllerRotationAxis(() -> driverXbox.getRightX() * -1)
                     .deadband(OperatorConstants.DEADBAND)
                     .scaleTranslation(0.3)
-                    .scaleRotation(0.25)
+                    .scaleRotation(0.4)
                     .allianceRelativeControl(true);
 
   /**
@@ -109,6 +109,7 @@ public class RobotContainer {
                                                                     .deadband(OperatorConstants.DEADBAND)
                                                                     .scaleTranslation(0.3)
                                                                     .allianceRelativeControl(true);
+                                                                    
   // Derive the heading axis with math!
   SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
                                                   .withControllerHeadingAxis(() ->
@@ -129,7 +130,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Start Launcher Near", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.NEAR_SHOOTER_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Mid", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.MID_SHOOTER_VELOCITY));
     NamedCommands.registerCommand("Start Launcher Far", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.FAR_SHOOTER_VELOCITY));
+    NamedCommands.registerCommand("Start First Mid Launch", launcherSubsystem.setShooterVelocityCommand(Constants.LauncherConstants.FIRST_MID_SHOT));
     NamedCommands.registerCommand("Stop Launcher",launcherSubsystem.stopShooterCommand());
+
 
     NamedCommands.registerCommand("Start Intake", intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
     NamedCommands.registerCommand("Stop Intake", intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.STOP_INTAKE));
@@ -178,7 +181,12 @@ public class RobotContainer {
     
     // # ---------------------- Driver Commands ------------------------ #
     // Slow Mode Fix Temporary - Right Trigger Makes the Robot Drive Slow - michaudc
-    driverXbox.leftTrigger().whileTrue(drivebase.driveFieldOriented(driveAngularSlow)); 
+    driverXbox.leftTrigger().whileTrue(drivebase.driveFieldOriented(driveAngularSlow)); //the func one with the supplier chassis speeds
+
+    // reverse intake - VC 6/24/26
+    driverXbox.leftBumper().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.REVERSE_ROLLER_SPEED));
+
+    driverXbox.leftBumper().whileTrue(launcherSubsystem.startStopFloorCommand());
 
     // Zero the Gyro (Reset Field Centric)
     driverXbox.a().onTrue((Commands.runOnce(()->drivebase.zeroGyro())));
@@ -189,13 +197,13 @@ public class RobotContainer {
 
     // #--------------------------Operator Commands------------------------#
 
-    operatorXbox.leftBumper().whileTrue(launcherSubsystem.startIndexerAndFloorCommand())
+    operatorXbox.rightBumper().whileTrue(launcherSubsystem.startIndexerAndFloorCommand())
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
     //operatorXbox.leftBumper().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
 
-    operatorXbox.rightBumper().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
+    operatorXbox.leftBumper().whileTrue(launcherSubsystem.reverseIndexerAndFloorCommand())
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand()
     );
 
@@ -227,6 +235,10 @@ public class RobotContainer {
     .whileFalse(launcherSubsystem.stopIndexerAndFloorCommand());
     driverXbox.povRight().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
     driverXbox.povLeft().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.REVERSE_ROLLER_SPEED));
+
+    driverXbox.rightTrigger().whileTrue(intakeSubsystem.setRollerSpeedCommand(Constants.IntakeConstants.ROLLER_SPEED));
+    
+
 
 
   }

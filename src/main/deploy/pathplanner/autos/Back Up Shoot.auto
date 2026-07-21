@@ -17,13 +17,19 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Start Launcher Mid"
+                  "name": "Start First Mid Launch"
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Back Up Path"
+                  "pathName": "Near Back Up Path"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Start Intake"
                 }
               }
             ]
