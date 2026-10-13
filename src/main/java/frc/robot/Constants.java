@@ -63,10 +63,10 @@ public final class Constants {
     public static final double FIRST_MID_SHOT = 65;
     public static final double STOP_LAUNCHER = 0;
 
-    public static final int indexerID = 30;
-    public static final int rearIndexerID = 31;
-    public static final int leftShooterID = 32;
-    public static final int rightShooterID = 33;
+    public static final int indexerID = 32;     // Needs to be 32 for swappable Robot 2
+    public static final int rearIndexerID = 33; // Needs to be 33 for swappable Robot 2
+    public static final int leftShooterID = 30; // Needs to be 30 for swappable Robot 2
+    public static final int rightShooterID = 31; // Needs to be 31 for swappable Robot 2
     public static final int activeFloorID = 34;
     public static final int launcherCurrentLimit = 60;
 
